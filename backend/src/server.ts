@@ -1,13 +1,8 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import pool from "./db";
 
-
-dotenv.config();
-
 const app = express();
-const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
@@ -20,11 +15,17 @@ app.get("/", (_req: Request, res: Response) => {
 // Get all patients
 app.get("/api/patients", async (_req: Request, res: Response) => {
   try {
-    const result = await pool.query("SELECT * FROM patients ORDER BY id ASC");
+    const result = await pool.query(
+      "SELECT * FROM patients ORDER BY id ASC"
+    );
+
     res.json(result.rows);
   } catch (error) {
     console.error("Error fetching patients:", error);
-    res.status(500).json({ error: "Failed to fetch patients" });
+
+    res.status(500).json({
+      error: "Failed to fetch patients",
+    });
   }
 });
 
@@ -39,7 +40,9 @@ app.delete("/api/patients/:id", async (req: Request, res: Response) => {
     );
 
     if (result.rowCount === 0) {
-      return res.status(404).json({ message: "Patient not found" });
+      return res.status(404).json({
+        message: "Patient not found",
+      });
     }
 
     return res.json({
@@ -48,10 +51,11 @@ app.delete("/api/patients/:id", async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error("Error deleting patient:", error);
-    return res.status(500).json({ error: "Failed to delete patient" });
+
+    return res.status(500).json({
+      error: "Failed to delete patient",
+    });
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+export default app;
